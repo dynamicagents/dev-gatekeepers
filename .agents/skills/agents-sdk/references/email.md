@@ -58,10 +58,7 @@ export default {
   },
 
   async fetch(request, env) {
-    return (
-      routeAgentRequest(request, env) ??
-      new Response("Not found", { status: 404 })
-    );
+    return routeAgentRequest(request, env) ?? new Response("Not found", { status: 404 });
   }
 };
 ```
@@ -101,7 +98,7 @@ Sign outbound emails to enable secure reply routing:
 await this.replyToEmail(email, {
   fromName: "My Agent",
   body: "Thanks!",
-  secret: this.env.EMAIL_SECRET // Signs headers for secure reply routing
+  secret: this.env.EMAIL_SECRET  // Signs headers for secure reply routing
 });
 ```
 

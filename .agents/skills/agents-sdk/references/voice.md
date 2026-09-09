@@ -20,9 +20,7 @@ export class VoiceAgent extends withVoice(Agent)<Env> {
 
   async onTurn(transcript: string, context: VoiceTurnContext) {
     const result = streamText({
-      model: createWorkersAI({ binding: this.env.AI })(
-        "@cf/meta/llama-4-scout-17b-16e-instruct"
-      ),
+      model: createWorkersAI({ binding: this.env.AI })("@cf/meta/llama-4-scout-17b-16e-instruct"),
       messages: [
         { role: "system", content: "You are a voice assistant." },
         ...context.conversationHistory,
@@ -40,13 +38,13 @@ export class VoiceAgent extends withVoice(Agent)<Env> {
 
 ## Lifecycle Hooks
 
-| Hook                      | Purpose                              |
-| ------------------------- | ------------------------------------ |
+| Hook | Purpose |
+|------|---------|
 | `onTurn(transcript, ctx)` | Handle transcribed speech (required) |
-| `beforeCallStart(conn)`   | Auth/validation before call starts   |
-| `onCallStart(conn)`       | Call connected                       |
-| `onCallEnd(conn)`         | Call disconnected                    |
-| `onInterrupt()`           | User interrupted agent speech        |
+| `beforeCallStart(conn)` | Auth/validation before call starts |
+| `onCallStart(conn)` | Call connected |
+| `onCallEnd(conn)` | Call disconnected |
+| `onInterrupt()` | User interrupted agent speech |
 
 ## Client (React)
 
@@ -59,11 +57,9 @@ function VoiceUI() {
     name: "session-1"
   });
 
-  return (
-    <button onClick={isConnected ? disconnect : connect}>
-      {isConnected ? "End Call" : "Start Call"}
-    </button>
-  );
+  return <button onClick={isConnected ? disconnect : connect}>
+    {isConnected ? "End Call" : "Start Call"}
+  </button>;
 }
 ```
 

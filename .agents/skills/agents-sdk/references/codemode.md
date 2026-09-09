@@ -6,13 +6,13 @@ Codemode lets LLMs write and execute code that orchestrates your tools, instead 
 
 ## When to Use
 
-| Scenario                       | Use Codemode?                         |
-| ------------------------------ | ------------------------------------- |
-| Single tool call               | No — standard tool calling is simpler |
-| Chained tool calls with logic  | Yes                                   |
-| Conditional logic across tools | Yes                                   |
-| MCP multi-server workflows     | Yes                                   |
-| Simple Q&A chat                | No                                    |
+| Scenario | Use Codemode? |
+|----------|---------------|
+| Single tool call | No — standard tool calling is simpler |
+| Chained tool calls with logic | Yes |
+| Conditional logic across tools | Yes |
+| MCP multi-server workflows | Yes |
+| Simple Q&A chat | No |
 
 ## Setup
 
@@ -47,11 +47,7 @@ const tools = {
   }),
   sendEmail: tool({
     description: "Send an email",
-    inputSchema: z.object({
-      to: z.string(),
-      subject: z.string(),
-      body: z.string()
-    }),
+    inputSchema: z.object({ to: z.string(), subject: z.string(), body: z.string() }),
     execute: async ({ to, subject, body }) => `Email sent to ${to}`
   })
 };
@@ -101,7 +97,7 @@ const codemode = createCodeTool({
 ```typescript
 const executor = new DynamicWorkerExecutor({
   loader: env.LOADER,
-  globalOutbound: null // default — fully isolated
+  globalOutbound: null           // default — fully isolated
   // globalOutbound: env.MY_SERVICE  // route through a Fetcher
 });
 ```

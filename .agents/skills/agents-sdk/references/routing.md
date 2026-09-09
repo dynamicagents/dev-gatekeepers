@@ -15,11 +15,11 @@ export default {
 };
 ```
 
-| Class      | URL                        |
-| ---------- | -------------------------- |
-| `Counter`  | `/agents/counter/user-123` |
-| `ChatRoom` | `/agents/chat-room/lobby`  |
-| `MyAgent`  | `/agents/my-agent/default` |
+| Class | URL |
+|-------|-----|
+| `Counter` | `/agents/counter/user-123` |
+| `ChatRoom` | `/agents/chat-room/lobby` |
+| `MyAgent` | `/agents/my-agent/default` |
 
 Subpaths after the instance name (e.g. `/agents/my-agent/default/api/data`) route to `onRequest`.
 
@@ -49,12 +49,8 @@ routeAgentRequest(req, env, {
   locationHint: "enam",
   jurisdiction: "eu",
   props: { userId: "123" },
-  onBeforeConnect: async (req) => {
-    /* auth check */
-  },
-  onBeforeRequest: async (req) => {
-    /* auth check */
-  }
+  onBeforeConnect: async (req) => { /* auth check */ },
+  onBeforeRequest: async (req) => { /* auth check */ }
 });
 ```
 

@@ -2,7 +2,7 @@
 
 ## Webhooks
 
-Fetch https://developers.cloudflare.com/agents/api-reference/webhooks/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/communication-channels/webhooks/ for complete documentation.
 
 Route external webhooks to agent instances via `onRequest`:
 
@@ -26,9 +26,7 @@ In the agent:
 export class MyAgent extends Agent<Env, State> {
   async onRequest(request: Request) {
     const signature = request.headers.get("X-Signature");
-    if (
-      !verifySignature(signature, await request.text(), this.env.WEBHOOK_SECRET)
-    ) {
+    if (!verifySignature(signature, await request.text(), this.env.WEBHOOK_SECRET)) {
       return new Response("Unauthorized", { status: 401 });
     }
     const payload = JSON.parse(await request.text());
@@ -42,7 +40,7 @@ export class MyAgent extends Agent<Env, State> {
 
 ## Push Notifications
 
-Fetch https://developers.cloudflare.com/agents/api-reference/push-notifications/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/communication-channels/webhooks/push-notifications/ for complete documentation.
 
 Web Push via VAPID from agents. Store subscriptions in agent state, send via `web-push`.
 
@@ -65,20 +63,16 @@ export class NotifyAgent extends Agent<Env, State> {
   async sendReminder(payload: { message: string }, schedule: Schedule) {
     for (const sub of this.state.subscriptions) {
       try {
-        await webpush.sendNotification(
-          sub,
-          JSON.stringify({
-            title: "Reminder",
-            body: payload.message
-          }),
-          {
-            vapidDetails: {
-              subject: "mailto:you@example.com",
-              publicKey: this.env.VAPID_PUBLIC_KEY,
-              privateKey: this.env.VAPID_PRIVATE_KEY
-            }
+        await webpush.sendNotification(sub, JSON.stringify({
+          title: "Reminder",
+          body: payload.message
+        }), {
+          vapidDetails: {
+            subject: "mailto:you@example.com",
+            publicKey: this.env.VAPID_PUBLIC_KEY,
+            privateKey: this.env.VAPID_PRIVATE_KEY
           }
-        );
+        });
       } catch (err) {
         if (err.statusCode === 404 || err.statusCode === 410) {
           // Remove expired subscription

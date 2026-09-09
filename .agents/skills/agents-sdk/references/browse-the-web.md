@@ -40,9 +40,9 @@ export class MyAgent extends AIChatAgent<Env> {
 
 ## Available Tools
 
-| Tool              | Purpose                                     |
-| ----------------- | ------------------------------------------- |
-| `browser_search`  | Search the web and return results           |
+| Tool | Purpose |
+|------|---------|
+| `browser_search` | Search the web and return results |
 | `browser_execute` | Navigate to URL, execute JS, return results |
 
 The LLM writes async JavaScript IIFEs that run in a fresh browser session.
