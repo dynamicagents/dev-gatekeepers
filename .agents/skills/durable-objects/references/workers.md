@@ -31,13 +31,19 @@ High-level guidance for Workers that invoke Durable Objects.
   },
 
   // KV namespaces
-  "kv_namespaces": [{ "binding": "CONFIG", "id": "abc123" }],
+  "kv_namespaces": [
+    { "binding": "CONFIG", "id": "abc123" }
+  ],
 
   // R2 buckets
-  "r2_buckets": [{ "binding": "UPLOADS", "bucket_name": "my-uploads" }],
+  "r2_buckets": [
+    { "binding": "UPLOADS", "bucket_name": "my-uploads" }
+  ],
 
   // D1 databases
-  "d1_databases": [{ "binding": "DB", "database_id": "xyz789" }]
+  "d1_databases": [
+    { "binding": "DB", "database_id": "xyz789" }
+  ]
 }
 ```
 
@@ -98,13 +104,9 @@ export { ChatRoom } from "./durable-objects/chat-room";
 export { UserSession } from "./durable-objects/user-session";
 
 export default {
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: ExecutionContext
-  ): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     // Worker handler
-  }
+  },
 };
 ```
 
@@ -112,11 +114,7 @@ export default {
 
 ```typescript
 export default {
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: ExecutionContext
-  ): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     try {
@@ -133,7 +131,7 @@ export default {
       console.error("Request failed:", error);
       return new Response("Internal Server Error", { status: 500 });
     }
-  }
+  },
 };
 
 async function handleRooms(request: Request, env: Env): Promise<Response> {
@@ -164,13 +162,10 @@ import { z } from "zod";
 
 const SendMessageSchema = z.object({
   userId: z.string().min(1),
-  message: z.string().min(1).max(1000)
+  message: z.string().min(1).max(1000),
 });
 
-async function handleSendMessage(
-  request: Request,
-  env: Env
-): Promise<Response> {
+async function handleSendMessage(request: Request, env: Env): Promise<Response> {
   const body = await request.json();
   const result = SendMessageSchema.safeParse(body);
 
@@ -182,10 +177,7 @@ async function handleSendMessage(
   }
 
   const stub = env.CHAT_ROOM.getByName(result.data.userId);
-  const message = await stub.sendMessage(
-    result.data.userId,
-    result.data.message
-  );
+  const message = await stub.sendMessage(result.data.userId, result.data.message);
   return Response.json(message);
 }
 ```
@@ -195,19 +187,13 @@ async function handleSendMessage(
 ### Structured Logging
 
 ```typescript
-function log(
-  level: "info" | "warn" | "error",
-  message: string,
-  data?: Record<string, unknown>
-) {
-  console.log(
-    JSON.stringify({
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      ...data
-    })
-  );
+function log(level: "info" | "warn" | "error", message: string, data?: Record<string, unknown>) {
+  console.log(JSON.stringify({
+    level,
+    message,
+    timestamp: new Date().toISOString(),
+    ...data,
+  }));
 }
 
 // Usage
@@ -228,7 +214,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     log("info", "Request completed", {
       requestId,
       duration: Date.now() - startTime,
-      status: response.status
+      status: response.status,
     });
 
     return response;
@@ -236,7 +222,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     log("error", "Request failed", {
       requestId,
       duration: Date.now() - startTime,
-      error: String(error)
+      error: String(error),
     });
     throw error;
   }
@@ -250,7 +236,9 @@ For production logging, use Tail Workers to forward logs:
 ```jsonc
 // wrangler.jsonc
 {
-  "tail_consumers": [{ "service": "log-collector" }]
+  "tail_consumers": [
+    { "service": "log-collector" }
+  ]
 }
 ```
 
@@ -259,10 +247,7 @@ For production logging, use Tail Workers to forward logs:
 ### Graceful DO Errors
 
 ```typescript
-async function callDO(
-  stub: DurableObjectStub<ChatRoom>,
-  method: string
-): Promise<Response> {
+async function callDO(stub: DurableObjectStub<ChatRoom>, method: string): Promise<Response> {
   try {
     const result = await stub.getMessages();
     return Response.json(result);
@@ -301,7 +286,7 @@ function corsHeaders(): HeadersInit {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 }
 
@@ -312,16 +297,16 @@ export default {
     }
 
     const response = await handleRequest(request, env);
-
+    
     // Add CORS headers to response
     const newHeaders = new Headers(response.headers);
     Object.entries(corsHeaders()).forEach(([k, v]) => newHeaders.set(k, v));
-
+    
     return new Response(response.body, {
       status: response.status,
-      headers: newHeaders
+      headers: newHeaders,
     });
-  }
+  },
 };
 ```
 
@@ -335,13 +320,12 @@ wrangler secret put DATABASE_URL
 ```
 
 Access in code:
-
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const apiKey = env.API_KEY; // From secret
     // ...
-  }
+  },
 };
 ```
 

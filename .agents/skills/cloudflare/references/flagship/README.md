@@ -4,15 +4,15 @@ Feature flag service for controlling feature visibility without redeploying code
 
 ## When to Use
 
-| Need                                           | Use Flagship? | Alternative                    |
-| ---------------------------------------------- | ------------- | ------------------------------ |
-| Feature toggles (on/off)                       | Yes           | —                              |
-| Gradual rollouts (percentage-based)            | Yes           | —                              |
-| A/B testing with attribute targeting           | Yes           | —                              |
-| Multi-variant configuration delivery           | Yes           | —                              |
-| Environment-specific config (dev/staging/prod) | Consider      | Wrangler environments, secrets |
-| Static config that never changes               | No            | `wrangler.jsonc` vars          |
-| Per-request rate limiting                      | No            | Rate Limiting rules            |
+| Need | Use Flagship? | Alternative |
+|------|--------------|-------------|
+| Feature toggles (on/off) | Yes | — |
+| Gradual rollouts (percentage-based) | Yes | — |
+| A/B testing with attribute targeting | Yes | — |
+| Multi-variant configuration delivery | Yes | — |
+| Environment-specific config (dev/staging/prod) | Consider | Wrangler environments, secrets |
+| Static config that never changes | No | `wrangler.jsonc` vars |
+| Per-request rate limiting | No | Rate Limiting rules |
 
 ## Key Concepts
 
@@ -25,22 +25,22 @@ Feature flag service for controlling feature visibility without redeploying code
 
 ## Two Evaluation Paths
 
-| Path                      | Runtime                   | Package                                                                      | Latency                                     | Auth                             |
-| ------------------------- | ------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------- | -------------------------------- |
-| **Binding** (`env.FLAGS`) | Workers only              | `@cloudflare/workers-types`                                                  | Lowest (no HTTP)                            | Automatic via binding            |
-| **OpenFeature SDK**       | Workers, Node.js, browser | `@cloudflare/flagship` + `@openfeature/server-sdk` or `@openfeature/web-sdk` | HTTP per eval (server) or prefetch (client) | API token or binding passthrough |
+| Path | Runtime | Package | Latency | Auth |
+|------|---------|---------|---------|------|
+| **Binding** (`env.FLAGS`) | Workers only | `@cloudflare/workers-types` | Lowest (no HTTP) | Automatic via binding |
+| **OpenFeature SDK** | Workers, Node.js, browser | `@cloudflare/flagship` + `@openfeature/server-sdk` or `@openfeature/web-sdk` | HTTP per eval (server) or prefetch (client) | API token or binding passthrough |
 
 **Recommendation:** Use the binding inside Workers. Use the SDK when running outside Workers or when you need OpenFeature vendor-neutrality.
 
 ## Reading Order
 
-| Task                              | Read                               |
-| --------------------------------- | ---------------------------------- |
-| Set up Flagship in a Worker       | `configuration.md` → `api.md`      |
-| Evaluate flags in code            | `configuration.md` → `patterns.md` |
-| Manage flags via REST API         | `api.md` → `patterns.md`           |
-| Design targeting rules & rollouts | `patterns.md` → `gotchas.md`       |
-| Debug flag evaluation issues      | `gotchas.md` → `api.md`            |
+| Task | Read |
+|------|------|
+| Set up Flagship in a Worker | `configuration.md` → `api.md` |
+| Evaluate flags in code | `configuration.md` → `patterns.md` |
+| Manage flags via REST API | `api.md` → `patterns.md` |
+| Design targeting rules & rollouts | `patterns.md` → `gotchas.md` |
+| Debug flag evaluation issues | `gotchas.md` → `api.md` |
 
 REST API note: management endpoints use Cloudflare v4 envelopes (`result`, `result_info`, `errors`) and snake_case fields. The `/evaluate` endpoint is the exception: it is not enveloped and returns OpenFeature-style camelCase.
 
@@ -54,6 +54,6 @@ REST API note: management endpoints use Cloudflare v4 envelopes (`result`, `resu
 ## See Also
 
 - **[Flagship API reference](https://developers.cloudflare.com/api/resources/flagship/)** — Source of truth for REST API paths, envelopes, and response fields
-- **[../workers/](../workers/)** — Workers runtime (Flagship runs inside Workers)
+- **[Workers docs](https://developers.cloudflare.com/workers/)** — Workers runtime (Flagship runs inside Workers)
 - **[../kv/](../kv/)** — KV storage (Flagship uses KV infrastructure for flag delivery)
-- **[../wrangler/](../wrangler/)** — Wrangler CLI for deployment and config
+- **[Wrangler docs](https://developers.cloudflare.com/workers/wrangler/)** — Wrangler CLI for deployment and config
