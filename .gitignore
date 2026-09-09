@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+*.log
+
+# Wrangler's login cache lands here and holds a real Cloudflare account id.
+# This repository is public and its first commit was a `git add -A`.
+.wrangler
+
+# The submodules keep their own env files behind their own .gitignore, and this
+# repo stores each as a commit SHA rather than a tree, so nothing leaks through
+# them. This line is for anything that lands at the root.
+.env*
+
+CLAUDE.local.md
