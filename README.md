@@ -8,7 +8,7 @@ combination, plus the agent skills they share — so a laptop, a cloud session, 
 that has never seen this project all reach the same place from one clone.
 
 ```bash
-git clone --recurse-submodules git@github.com:dynamicagents/dev-gatekeepers.git
+git clone --recurse-submodules https://github.com/dynamicagents/dev-gatekeepers.git
 cd dev-gatekeepers
 npm install && npm run bootstrap
 ```

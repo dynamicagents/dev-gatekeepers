@@ -77,6 +77,38 @@ deployed Worker — logs, Workflow instances, AI Gateway calls. It reads credent
 gitignored `.cf.env` and redacts them from all output, so the token never lands in shell
 history or in an agent's context. Prefer it to pasting a token anywhere.
 
+### Remotes are HTTPS, and SSH is yours alone
+
+`.gitmodules` spells every url `https://github.com/…`, and `npm run check` fails anything
+but that or a relative path — a relative url resolves against this repo's own remote, so it
+arrives by whatever transport the clone used. A committed url has to work in the
+least-equipped place that will ever read it, and that is not this laptop: a cloud session
+holds a GitHub token and no key, installs no `openssh-client`, and reaches the network
+through an HTTP gateway carrying no SSH. A token cannot be made into a key from in there,
+so `git@github.com:` is not slow — it is unreachable.
+
+Preferring SSH is a *local* matter, and git has the mechanism:
+
+```bash
+git config --global url."git@github.com:".insteadOf "https://github.com/"
+```
+
+Fetch and push then go over SSH while the recorded url stays HTTPS — `git clone` records
+the url it was **given**, not the rewritten one, so nothing about this is committed.
+
+**It has to be global.** A submodule is its own repository, reading its own config and
+yours but never the superproject's, so a rewrite in `dev-gatekeepers/.git/config` would
+work here and silently not in `g2a-protocol/` or `slack-gatekeeper/`.
+
+An existing checkout keeps the url `git submodule init` copied into it until
+`git submodule sync --recursive` moves it; `npm run bootstrap` runs that first.
+
+The `git+ssh://` line for `slackify-markdown` in slack-gatekeeper's `package-lock.json` is
+**not** the same problem. npm records the ssh spelling for a `github:` dependency because
+that is what pacote's `repoUrl()` returns, then downloads the codeload HTTPS tarball rather
+than cloning, precisely because the two match. Rewrite it to `git+https://` and they stop
+matching, and npm falls back to a real clone.
+
 ### The submodule pointers
 
 A pointer is a **known-good combination**, not a mirror of each submodule's `main`. Every
