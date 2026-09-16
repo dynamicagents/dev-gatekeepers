@@ -79,12 +79,13 @@ history or in an agent's context. Prefer it to pasting a token anywhere.
 
 ### Remotes are HTTPS, and SSH is yours alone
 
-`.gitmodules` spells every url `https://github.com/…`, and `npm run check` fails one that
-does not. A committed url has to work in the least-equipped place that will ever read it,
-and that is not this laptop: a cloud session holds a GitHub token and no key, installs no
-`openssh-client`, and reaches the network through an HTTP gateway carrying no SSH. A token
-cannot be made into a key from in there, so `git@github.com:` is not slow — it is
-unreachable.
+`.gitmodules` spells every url `https://github.com/…`, and `npm run check` fails anything
+but that or a relative path — a relative url resolves against this repo's own remote, so it
+arrives by whatever transport the clone used. A committed url has to work in the
+least-equipped place that will ever read it, and that is not this laptop: a cloud session
+holds a GitHub token and no key, installs no `openssh-client`, and reaches the network
+through an HTTP gateway carrying no SSH. A token cannot be made into a key from in there,
+so `git@github.com:` is not slow — it is unreachable.
 
 Preferring SSH is a *local* matter, and git has the mechanism:
 
