@@ -143,6 +143,12 @@ export const report = (results) => {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-  reportHeal(healWorkspace(root));
+  const healed = healWorkspace(root);
+  reportHeal(healed);
   report(sync(root));
+  // Reported, then failed: the submodules below are still worth syncing and printing,
+  // but a path left as a file is not something this run fixed, and a zero exit is how
+  // that gets missed. `bootstrap` imports `sync` rather than running it, so this guard
+  // is false there and it answers for its own heal.
+  if (healed.some(({ warnings }) => warnings.length > 0)) process.exitCode = 1;
 }
