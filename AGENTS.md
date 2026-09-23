@@ -64,7 +64,6 @@ npm run bootstrap    # submodules on a branch, node_modules, skill links. Run th
 npm run check        # skill links and submodule structure are intact
 npm run skills       # re-link .claude/skills after adding or removing a skill
 npm run sync         # put every submodule on its branch and fast-forward it
-npm run symlinks     # put back the symlinks a clone flattened. bootstrap and sync do it too
 ```
 
 **Verify with `npm run check` in the repo you touched, not `npm test`.** Vitest

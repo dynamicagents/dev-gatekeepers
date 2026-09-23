@@ -267,18 +267,3 @@ export const reportHeal = (results) => {
     console.error("");
   }
 };
-
-// `bootstrap` and `sync` call the exports above as part of a longer run, and both
-// keep going afterwards. Run on its own it is a repair you asked for, so it says
-// so when there was nothing to repair, and exits non-zero when it healed what it
-// could and something is still a text file where a link belongs — the state
-// `npm run check` is about to fail on, reported by the script that just tried.
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const root = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-  const results = healWorkspace(root);
-  reportHeal(results);
-  if (results.every(({ note, warnings }) => note === null && warnings.length === 0)) {
-    console.log("Symlinks: nothing to do — every tracked link is a link and every config agrees.");
-  }
-  if (results.some(({ warnings }) => warnings.length > 0)) process.exit(1);
-}
