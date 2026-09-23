@@ -25,6 +25,16 @@
  * rewritten upstream, stops with its own message rather than being merged into
  * silently.
  *
+ * ## Symlinks first
+ *
+ * Run on its own it also re-materializes the symlinks a clone may have flattened,
+ * before anything below — `scripts/symlinks.mjs` has the why. The order is not
+ * incidental: the checkouts and merges below write working trees, so the config
+ * deciding how they spell a symlink has to be right before they run, and the
+ * dirty-tree guard has to see a tree that has already been repaired rather than
+ * one mid-repair. `bootstrap` heals for itself and calls `sync` below, so this
+ * sits in the entry point rather than in `sync`, and neither does it twice.
+ *
  * ## Why it does not bump the pointers
  *
  * Moving a submodule and recording where it moved to are separate decisions. The
@@ -36,6 +46,7 @@
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { declared, git, tryGit, currentBranch, recordedCommit } from "./submodule-config.mjs";
+import { healWorkspace, reportHeal } from "./symlinks.mjs";
 
 /** Returns [path, note] per submodule. `quiet` suppresses the fetch's stderr. */
 export const sync = (root) => {
@@ -132,5 +143,12 @@ export const report = (results) => {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
+  const healed = healWorkspace(root);
+  reportHeal(healed);
   report(sync(root));
+  // Reported, then failed: the submodules below are still worth syncing and printing,
+  // but a path left as a file is not something this run fixed, and a zero exit is how
+  // that gets missed. `bootstrap` imports `sync` rather than running it, so this guard
+  // is false there and it answers for its own heal.
+  if (healed.some(({ warnings }) => warnings.length > 0)) process.exitCode = 1;
 }

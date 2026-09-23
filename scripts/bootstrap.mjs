@@ -4,9 +4,11 @@
  * in a submodule.
  *
  * `git clone --recurse-submodules` already brings the repos, and because git
- * stores symlinks verbatim `.claude/skills/` arrives working — nothing stands
- * between a clone and an agent seeing the skills. What is missing is a branch to
- * work on and the `node_modules` trees.
+ * stores symlinks verbatim `.claude/skills/` arrives working — unless the clone
+ * decided this filesystem has no symlinks, in which case every link arrives as a
+ * plain file naming its own target, `CLAUDE.md` included, and nothing says so.
+ * Repairing that is `symlinks.mjs`, whose header has the why. What is missing
+ * besides is a branch to work on and the `node_modules` trees.
  *
  * The branch half is `sync`, called rather than reimplemented: `git submodule
  * update` checks out the *recorded commit*, and a commit is not a branch, so it
@@ -38,6 +40,7 @@ import { execFileSync } from "node:child_process";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { declared } from "./submodule-config.mjs";
+import { healWorkspace, reportHeal } from "./symlinks.mjs";
 import { sync, report } from "./sync.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -65,6 +68,13 @@ if (uninitialized.length > 0) {
   run("git", ["submodule", "update", "--init", "--recursive", "--", ...uninitialized.map((s) => s.path)]);
 }
 
+// After the init above, so a submodule cloned a moment ago is healed with the rest
+// and none is missed for having arrived late. Before `sync`, and finishing before
+// it: turning `core.symlinks` on is what makes a flattened link start reading as a
+// modification, and `sync` refuses to move a submodule whose tree looks dirty.
+const healed = healWorkspace(root);
+reportHeal(healed);
+
 console.log("\nSubmodules:");
 report(sync(root));
 
@@ -81,4 +91,13 @@ if (skipped.length > 0) console.log(`\nnode_modules present, install skipped: ${
 
 run("node", [join(root, "scripts", "skills.mjs")]);
 
-console.log("\nReady. Launch your agent from this directory so the workspace skills and AGENTS.md load.");
+// A heal warning is a path where a symlink belongs and a file still sits, which only
+// a person can settle. `skills.mjs` above validates the skill links and nothing else,
+// so an unresolved `CLAUDE.md` would otherwise leave "Ready." and an exit 0 behind —
+// and this is the run that was supposed to say so.
+if (healed.some(({ warnings }) => warnings.length > 0)) {
+  process.exitCode = 1;
+  console.error("\nNot ready: the paths reported above are still files where a symlink belongs.");
+} else {
+  console.log("\nReady. Launch your agent from this directory so the workspace skills and AGENTS.md load.");
+}
