@@ -53,6 +53,7 @@ announces a skill it did not find.
 | `npm run check` | skill links and submodule structure are intact |
 | `npm run skills` | re-link `.claude/skills/` after adding or removing a skill |
 | `npm run sync` | put every submodule on its branch and fast-forward it |
+| `npm run symlinks` | put back the symlinks a clone flattened into text files. `bootstrap` and `sync` run it too |
 | `node scripts/submodules.mjs --pushed` | every pinned commit is on a remote — needs network, so it is not in `check` |
 
 ## The submodule pointers
