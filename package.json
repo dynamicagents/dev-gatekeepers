@@ -1,8 +1,8 @@
 {
-  "name": "dev-gatekeepers",
+  "name": "dev-gates",
   "private": true,
   "type": "module",
-  "description": "The workspace that holds the Dynamic Agents gatekeeper repos and the skills they share.",
+  "description": "The workspace that holds the Dynamic Agents gates repos and the skills they share.",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=24"

@@ -1,15 +1,15 @@
-# dev-gatekeepers
+# dev-gates
 
 **The development environment for the [Dynamic Agents](https://github.com/dynamicagents)
-gatekeeper side.**
+gates side.**
 
 The gatekeeper and the wire contract it speaks, pinned together at a known-good
 combination, plus the agent skills they share — so a laptop, a cloud session, or a machine
 that has never seen this project all reach the same place from one clone.
 
 ```bash
-git clone --recurse-submodules https://github.com/dynamicagents/dev-gatekeepers.git
-cd dev-gatekeepers
+git clone --recurse-submodules https://github.com/dynamicagents/dev-gates.git
+cd dev-gates
 npm install && npm run bootstrap
 ```
 
