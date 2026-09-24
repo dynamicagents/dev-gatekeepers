@@ -1,6 +1,6 @@
-# AGENTS.md — the Dynamic Agents gatekeeper workspace
+# AGENTS.md — the Dynamic Agents gates workspace
 
-The gatekeeper half of the system: the service agents talk *through*, and the wire
+The gates half of the system: the service agents talk *through*, and the wire
 contract that keeps it and the agent runtime from drifting apart.
 
 | repo | what it is |
@@ -97,7 +97,7 @@ Fetch and push then go over SSH while the recorded url stays HTTPS — `git clon
 the url it was **given**, not the rewritten one, so nothing about this is committed.
 
 **It has to be global.** A submodule is its own repository, reading its own config and
-yours but never the superproject's, so a rewrite in `dev-gatekeepers/.git/config` would
+yours but never the superproject's, so a rewrite in `dev-gates/.git/config` would
 work here and silently not in `g2a-protocol/` or `slack-gatekeeper/`.
 
 An existing checkout keeps the url `git submodule init` copied into it until
